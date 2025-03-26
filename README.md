@@ -1,7 +1,7 @@
 # Group Policy CSE Debugger
 
 ## Description
-This tool automatically diagnoses Group Policy errors by identifying problematic Client-Side Extensions (CSEs) that cause "Invalid pointer" or other errors. It systematically tests each CSE after temporarily removing it from gpt.ini.
+This tool automatically diagnoses Group Policy errors by identifying problematic Client-Side Extensions (CSEs) that cause "Invalid pointer" and other errors. It systematically tests each CSE after temporarily removing it from gpt.ini.
 
 ## Requirements
 - Windows system with Group Policy functionality
@@ -34,13 +34,13 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 ```
 
 ## How It Works
-1. Tests for Group Policy pointer errors
-2. Creates or uses a specified Group Policy backup
-3. Analyzes CSE extensions using LGPO.exe
-4. Systematically removes each CSE GUID pair from gpt.ini
-5. Tests after each removal to determine which CSE is causing the error
-6. Provides specific advice based on the problematic CSE detected
-7. Offers options to rebuild gpt.ini without the problematic CSE or restore original settings
+1. Creates or uses a specified Group Policy backup
+2. Analyzes CSE extensions using LGPO.exe
+3. Creates first run permanent backup of original \windows\system32\GroupPolicy\gpt.ini to .\GPT_Backups\
+3. Systematically removes each CSE GUID pair from \windows\system32\GroupPolicy\gpt.ini
+4. Tests after each removal to determine which CSE is causing the error
+5. Provides specific advice based on the problematic CSE detected
+6. Offers options to rebuild gpt.ini without the problematic CSE or restore original settings
 
 ## Log Files
 The script maintains a detailed log file (GpoTest.log) that records all actions and findings. Each new session is appended to this log with a timestamp.
