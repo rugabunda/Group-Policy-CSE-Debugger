@@ -45,6 +45,7 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 ## Log Files
 The script maintains a detailed log file (GpoTest.log) that records all actions and findings. Each new session is appended to this log with a timestamp.
 
+## Screenshots
 ![Screenshot1](screenshots/1.jpg)
 ![Screenshot2](screenshots/2.jpg)
 
