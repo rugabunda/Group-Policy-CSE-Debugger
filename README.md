@@ -1,7 +1,7 @@
 # Group Policy CSE Debugger
 
 ## Description
-This tool automatically diagnoses Group Policy errors by identifying problematic Client-Side Extensions (CSEs) that cause "Invalid pointer" and other errors. It systematically tests each CSE after temporarily removing it from gpt.ini.
+This tool automates the diagnosis of Microsoft Windows Group Policy errors by identifying problematic Client-Side Extensions (CSEs) that cause "Invalid pointer" and other errors. It systematically tests each CSE after temporarily removing it from gpt.ini.
 
 ## Requirements
 - Windows system with Group Policy functionality
