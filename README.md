@@ -1,7 +1,11 @@
+# DISCLAIMER: 
+
+This tool is for diagnostic and debugging purposes to isolate the source of Group Policy errors. Removing problematic CSEs resolves pointer errors but disables related Group Policy functionality. This approach addresses symptoms rather than root causes, and policy settings controlled by removed CSEs will no longer apply. Consider this a temporary solution for diagnostic purposes only. For production environments, thoroughly document affected policies and consider rebuilding Group Policies through official management channels once the source of corruption is identified.
+
 # Group Policy CSE Debugger
 
 ## Description
-This tool automatically diagnoses Group Policy errors by identifying problematic Client-Side Extensions (CSEs) that cause "Invalid pointer" errors. It systematically tests each CSE by temporarily removing it from gpt.ini and testing f the error disappears.
+This tool automatically diagnoses Group Policy errors by identifying problematic Client-Side Extensions (CSEs) that cause "Invalid pointer" or other errors. It systematically tests each CSE after temporarily removing it from gpt.ini.
 
 ## Requirements
 - Windows system with Group Policy functionality
@@ -15,7 +19,6 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 
 ## Usage
 ```
-.\
 .\GPCseDebugger.ps1 [-BackupPath <path>] [-Mode <Auto|Manual>]
 ```
 
@@ -23,15 +26,15 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 - **BackupPath**: (Optional) Path to an existing LGPO backup. If not specified, a new backup will be created.
 - **Mode**: (Optional) Debugging mode - "Auto" or "Manual". Default is Auto.
   - **Auto**: Script runs all tests automatically and stops when it finds a problematic CSE
-  - **Manual**: Script prompts after each test, allowing user to determine if error has been resolved
+  - **Manual**: Script prompts after each test, allowing user the time to test if a group policy error has been resolved
 
 ### Examples
 ```
-# Run with default settings (Auto mode, new backup)
+# Run with default settings
 .\GPCseDebugger.ps1
 
-# Run in Manual mode with existing backup
-.\GPCseDebugger.ps1 -BackupPath "D:\Backups\{GUID-FOLDER}" -Mode "Manual"
+# Run in Manual mode with existing backup, example:
+.\GPCseDebugger.ps1 -BackupPath "C:\Backups\{GUID}" -Mode "Manual"
 ```
 
 ## How It Works
