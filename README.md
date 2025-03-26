@@ -26,7 +26,7 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 - **BackupPath**: (Optional) Path to an existing LGPO backup. If not specified, a new backup will be created.
 - **Mode**: (Optional) Debugging mode - "Auto" or "Manual". Default is Auto.
   - **Auto**: Script runs all tests automatically and stops when it finds a problematic CSE
-  - **Manual**: Script prompts after each test, allowing user the time to test if a group policy error has been resolved
+  - **Manual**: Script prompts after each test, allowing user the time to test if a group policy error has been resolved after disabling problematic CSE
 
 ### Examples
 ```
