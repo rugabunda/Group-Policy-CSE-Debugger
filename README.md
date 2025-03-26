@@ -1,7 +1,3 @@
-# DISCLAIMER: 
-
-This tool is for diagnostic and debugging purposes to isolate the source of Group Policy errors. Removing problematic CSEs resolves pointer errors but disables related Group Policy functionality. This approach addresses symptoms rather than root causes, and policy settings controlled by removed CSEs will no longer apply. Consider this a temporary solution for diagnostic purposes only. For production environments, thoroughly document affected policies and consider rebuilding Group Policies through official management channels once the source of corruption is identified.
-
 # Group Policy CSE Debugger
 
 ## Description
@@ -48,3 +44,7 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 
 ## Log Files
 The script maintains a detailed log file (GpoTest.log) that records all actions and findings. Each new session is appended to this log with a timestamp.
+
+# DISCLAIMER: 
+
+This tool is for diagnostic and debugging purposes to isolate the source of Group Policy errors. Removing problematic CSEs resolves pointer errors but disables related Group Policy functionality. This approach addresses symptoms rather than root causes, and policy settings controlled by removed CSEs will no longer apply. Consider this a temporary solution for diagnostic purposes only. For production environments, thoroughly document affected policies and consider rebuilding Group Policies through official management channels once the source of corruption is identified.
