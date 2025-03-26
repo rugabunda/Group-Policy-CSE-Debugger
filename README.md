@@ -40,7 +40,7 @@ This tool automatically diagnoses Group Policy errors by identifying problematic
 3. Systematically removes each CSE GUID pair from \windows\system32\GroupPolicy\gpt.ini
 4. Tests after each removal to determine which CSE is causing the error
 5. Provides specific advice based on the problematic CSE detected
-6. Offers options to rebuild gpt.ini without the problematic CSE or restore original settings
+6. Offers options to rebuild gpt.ini without the problematic CSE or restore original settings (read disclaimer below)
 
 ## Log Files
 The script maintains a detailed log file (GpoTest.log) that records all actions and findings. Each new session is appended to this log with a timestamp.
