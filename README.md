@@ -1,5 +1,3 @@
-Here is the updated `README.md` content:
-
 ## Group Policy CSE Debugger
 
 ### Description
