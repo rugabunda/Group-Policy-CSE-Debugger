@@ -30,13 +30,12 @@ This tool automates the diagnosis of Microsoft Windows Group Policy errors by id
 ```
 
 ### How It Works
-1. Creates or uses a specified Group Policy backup
-2. Analyzes CSE extensions
-3. Creates first run permanent backup of original \windows\system32\GroupPolicy\gpt.ini to .\GPT_Backups\
-4. Systematically removes each CSE GUID pair from \windows\system32\GroupPolicy\gpt.ini
-5. Tests after each removal to determine which CSE is causing the error
-6. Provides specific advice based on the problematic CSE detected
-7. Offers options to rebuild gpt.ini without the problematic CSE or restore original settings (read disclaimer below)
+1. Analyzes CSE extensions
+2. Creates first run permanent backup of original \windows\system32\GroupPolicy\gpt.ini to .\GPT_Backups\
+3. Systematically removes each CSE GUID pair from \windows\system32\GroupPolicy\gpt.ini
+4. Tests after each removal to determine which CSE is causing the error
+5. Provides specific advice based on the problematic CSE detected
+6. Offers options to rebuild gpt.ini without the problematic CSE or restore original settings (read disclaimer below)
 
 ### Log Files
 The script maintains a detailed log file (GpoTest.log) that records all actions and findings. Each new session is appended to this log with a timestamp.
@@ -47,7 +46,7 @@ The script maintains a detailed log file (GpoTest.log) that records all actions 
 
 ### DISCLAIMER
 
-This tool is for diagnostic and debugging purposes to isolate the source of Group Policy errors. Removing problematic CSEs resolves pointer errors but disables related Group Policy functionality. This tool requires elevation/admin rights. 
+This tool is for diagnostic and debugging purposes to isolate the source of Group Policy errors. Removing problematic CSEs resolves pointer errors but disables related Group Policy functionality. Do not disable group policy functionality without first knowing the security implications.  This tool requires elevation/admin rights. 
 
 Resources for additional troubleshooting:
 - https://learn.microsoft.com/en-us/archive/blogs/askds/a-treatise-on-group-policy-troubleshootingnow-with-gpsvc-log-analysis
