@@ -1,5 +1,3 @@
-Based on the updated `GPCseDebugger.ps1` file, here's the revised `README.md` content:
-
 ```markdown
 # Group Policy CSE Debugger
 
