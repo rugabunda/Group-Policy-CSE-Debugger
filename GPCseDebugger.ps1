@@ -456,65 +456,153 @@ function Test-CsePair {
 
 # Begin systematic testing by removing each GUID pair one by one
 & $f1
-Write-Log "Beginning systematic testing of each CSE GUID pair..."
+Write-Log "Beginning systematic testing of CSE GUID pairs..."
 & $f1
 
 $problematicGuidPairs = @()
 $testedGuidPairs = @{}
-$continueNextTest = $true
 
-# First, test each Machine CSE GUID pair
-foreach ($pair in $machineGuidPairs) {
-    $result = Test-CsePair -Pair $pair -Type "Machine"
+# Handle testing based on selected mode
+if ($Mode -eq "Auto") {
+    # Automatic mode - test each GUID pair in sequence
     
-    if (-not $result.HasError) {
-        Write-Log "Found problematic Machine CSE: $($result.CSEName) ($($pair.PrimaryGuid))" -Success
-        $problematicGuidPairs += $result
-        $testedGuidPairs[$pair.PrimaryGuid] = $false
-        
-        if ($Mode -eq "Auto" -or -not $result.ContinueTest) {
-            break
-        }
-    } else {
-        $testedGuidPairs[$pair.PrimaryGuid] = $true
-    }
-    
-    if ($Mode -eq "Manual" -and $result.ContinueTest) {
-        Write-Host ""
-        $continueNextTest = Read-Host "Continue testing next CSE? (Y/N)"
-        
-        if ($continueNextTest -ne "Y") {
-            Write-Log "User chose to stop testing."
-            break
-        }
-    }
-}
-
-# If no problematic Machine CSE was found and we're continuing, test User CSEs
-if ($problematicGuidPairs.Count -eq 0 -and ($Mode -eq "Auto" -or $continueNextTest -eq "Y")) {
-    foreach ($pair in $userGuidPairs) {
-        $result = Test-CsePair -Pair $pair -Type "User"
+    # First, test each Machine CSE GUID pair
+    foreach ($pair in $machineGuidPairs) {
+        $result = Test-CsePair -Pair $pair -Type "Machine"
         
         if (-not $result.HasError) {
-            Write-Log "Found problematic User CSE: $($result.CSEName) ($($pair.PrimaryGuid))" -Success
+            Write-Log "Found problematic Machine CSE: $($result.CSEName) ($($pair.PrimaryGuid))" -Success
             $problematicGuidPairs += $result
             $testedGuidPairs[$pair.PrimaryGuid] = $false
-            
-            if ($Mode -eq "Auto" -or -not $result.ContinueTest) {
-                break
-            }
+            break
         } else {
             $testedGuidPairs[$pair.PrimaryGuid] = $true
         }
-        
-        if ($Mode -eq "Manual" -and $result.ContinueTest) {
-            Write-Host ""
-            $continueNextTest = Read-Host "Continue testing next CSE? (Y/N)"
+    }
+
+    # If no problematic Machine CSE was found, test User CSEs
+    if ($problematicGuidPairs.Count -eq 0) {
+        foreach ($pair in $userGuidPairs) {
+            $result = Test-CsePair -Pair $pair -Type "User"
             
-            if ($continueNextTest -ne "Y") {
-                Write-Log "User chose to stop testing."
+            if (-not $result.HasError) {
+                Write-Log "Found problematic User CSE: $($result.CSEName) ($($pair.PrimaryGuid))" -Success
+                $problematicGuidPairs += $result
+                $testedGuidPairs[$pair.PrimaryGuid] = $false
                 break
+            } else {
+                $testedGuidPairs[$pair.PrimaryGuid] = $true
             }
+        }
+    }
+} else {
+    # Manual mode - Create a list of all CSE pairs with proper identification
+    $allCsePairs = @()
+    
+    # Add machine CSEs to the list
+    foreach ($pair in $machineGuidPairs) {
+        $primaryGuidNoBraces = $pair.PrimaryGuidNoBraces
+        $cseName = "Unknown CSE"
+        if ($cseMapping.ContainsKey($primaryGuidNoBraces)) {
+            $cseName = $cseMapping[$primaryGuidNoBraces]
+        }
+        
+        $allCsePairs += [PSCustomObject]@{
+            Type = "Machine"
+            CSEName = $cseName
+            GuidPair = $pair
+            PrimaryGuid = $pair.PrimaryGuid
+            IsProblematic = $null
+            Tested = $false
+        }
+    }
+    
+    # Add user CSEs to the list
+    foreach ($pair in $userGuidPairs) {
+        $primaryGuidNoBraces = $pair.PrimaryGuidNoBraces
+        $cseName = "Unknown CSE"
+        if ($cseMapping.ContainsKey($primaryGuidNoBraces)) {
+            $cseName = $cseMapping[$primaryGuidNoBraces]
+        }
+        
+        $allCsePairs += [PSCustomObject]@{
+            Type = "User"
+            CSEName = $cseName
+            GuidPair = $pair
+            PrimaryGuid = $pair.PrimaryGuid
+            IsProblematic = $null
+            Tested = $false
+        }
+    }
+    
+    # Loop until user chooses to exit
+    $continueTests = $true
+    while ($continueTests) {
+        # Display menu with numbered list of all CSEs
+        & $f1
+        Write-Host "Select a CSE to test from the list below:" -ForegroundColor Cyan
+        & $f1
+        
+        for ($i = 0; $i -lt $allCsePairs.Count; $i++) {
+            $statusMarker = " "
+            $statusColor = "White"
+            
+            if ($allCsePairs[$i].Tested) {
+                if ($allCsePairs[$i].IsProblematic) {
+                    $statusMarker = "!"
+                    $statusColor = "Red"
+                } else {
+                    $statusMarker = "√"
+                    $statusColor = "Green"
+                }
+            }
+            
+            Write-Host "$($i+1)." -NoNewline
+            Write-Host " [$statusMarker]" -ForegroundColor $statusColor -NoNewline
+            Write-Host " $($allCsePairs[$i].Type) CSE: $($allCsePairs[$i].CSEName) ($($allCsePairs[$i].PrimaryGuid))"
+        }
+        
+        Write-Host "0. Exit testing and proceed to summary" -ForegroundColor Yellow
+        
+        # Get user selection
+        $selection = Read-Host "Enter the number of the CSE to test (0 to exit)"
+        $selectionNum = 0
+        
+        # Validate input
+        if ([int]::TryParse($selection, [ref]$selectionNum)) {
+            if ($selectionNum -eq 0) {
+                $continueTests = $false
+                Write-Log "User chose to stop testing and proceed to summary."
+                continue
+            } elseif ($selectionNum -gt 0 -and $selectionNum -le $allCsePairs.Count) {
+                $selectedIndex = $selectionNum - 1
+                $selectedCse = $allCsePairs[$selectedIndex]
+                
+                # Test the selected CSE
+                $result = Test-CsePair -Pair $selectedCse.GuidPair -Type $selectedCse.Type
+                
+                # Update the testing status
+                $allCsePairs[$selectedIndex].Tested = $true
+                $allCsePairs[$selectedIndex].IsProblematic = -not $result.HasError
+                
+                # If problematic, add to the list
+                if (-not $result.HasError) {
+                    Write-Log "Found problematic $($selectedCse.Type) CSE: $($selectedCse.CSEName) ($($selectedCse.PrimaryGuid))" -Success
+                    $problematicGuidPairs += $result
+                    $testedGuidPairs[$selectedCse.PrimaryGuid] = $false
+                } else {
+                    $testedGuidPairs[$selectedCse.PrimaryGuid] = $true
+                }
+                
+                # Ask if user wants to test another CSE
+                Write-Host ""
+                Write-Host "Test completed for $($selectedCse.CSEName)" -ForegroundColor Cyan
+                Write-Host "Select another CSE to test from the menu or enter 0 to proceed to summary." -ForegroundColor Cyan
+            } else {
+                Write-Log "Invalid selection. Please enter a number between 0 and $($allCsePairs.Count)." -Warning
+            }
+        } else {
+            Write-Log "Invalid input. Please enter a number." -Warning
         }
     }
 }
